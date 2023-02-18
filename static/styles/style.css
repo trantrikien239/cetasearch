@@ -1,0 +1,257 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding: 0;
+    font-family: 'Kumbh Sans', sans-serif;
+}
+
+#forms_h1 {
+    margin-top: 10px;
+}
+
+.navbar {
+    background: #131313;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+.navbar__container {
+    display: flex;
+    justify-content: space-between;
+    height: 80px;
+    z-index: 1;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 50px;
+}
+/* .navbar_container {
+    width: 100%;
+} */
+
+#navbar__logo {
+    background-color: #ff8177;
+    background-image: linear-gradient(to top, #ff0844 0%,#ffb19f 100%);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color:transparent;
+    display: left;
+    text-align: center;
+    align-items: center;
+    cursor:pointer;
+    text-decoration: none;
+    font-size: 2rem;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+.fa-gem {
+    margin-right: 0.5rem;
+}
+
+.navbar__menu {
+    display:flex;
+    align-items: center;
+    list-style: none;
+    text-align: center;
+}
+
+.navbar__item {
+    height: 80px;
+}
+
+.navbar__links {
+    color: #fff;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding:0 1rem;
+    height:  100%;
+}
+.navbar__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    width: 170px;
+    height:  60px;
+}
+
+.button {
+    display: left ;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    background: #f77062;
+    color: #fff;
+    font-size: 0.8em;
+}
+
+
+
+.button:hover {
+    background: #4837ff;
+    transition:  all 0.3s ease;
+}
+
+.navbar__links:hover {
+    color: #f77062;
+    transition:  all 0.3s ease;
+}
+.form-field {
+    margin-bottom: 0.5em;
+    
+}
+  
+.form-field label {
+    display: flex;
+ 
+    width: 6em;
+}
+  
+.contact-form {
+   border: 1px solid #DDD;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+}
+  
+#form-container {
+    margin-bottom: 1em;
+    margin-left: 10em;
+    margin-right: 10em;
+}
+
+form {
+
+    padding: 0.5em;
+}
+/* button {
+display: "none";
+} */
+
+div.d3-tip {
+    line-height: 1;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: red;
+    border-radius: 4px;
+    font-size: 12px;
+    position: absolute;	
+    text-align:center;
+    /* text-align: center;	 */
+    width: 300px;	
+    height: 400px;		
+    padding: 10px;	
+    font: 15px sans-serif;	
+    background: lightsteelblue;	
+    border: 0px;					
+    border-radius: 8px;
+}
+
+h1 {
+    text-align:center;
+    font-family: Papyrus;
+    background-color: #77cbff;
+    background-image: linear-gradient(to top, #0369a8 0%,#77cbff 100%);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color:transparent;
+    display: left;
+    align-items: center;
+    cursor:pointer;
+    text-decoration: none;
+    font-size: 2rem;
+
+}
+
+p {
+text-align:center;
+
+}
+
+#d1 {
+    margin-left: 10px;
+    margin-top: 50px;
+    width: 375px;
+    border-style: dashed;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#d2 {
+    margin-left: 10px;
+    margin-right: 30px;
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#d2 p {
+    text-align: left;
+    font-size: 14px;
+}
+
+td {
+    vertical-align: top;
+}
+
+#d1 label {
+    /* display: inline-block; */
+    width: 200px;
+    text-align: left;
+}
+
+#d1 select {
+    width: 120px;
+    right: auto;
+    direction: ltr;
+    
+}
+
+#d1 p {
+    text-align: left;
+}
+
+.form-field input {
+    text-align: center;
+    width: 30%;
+}
+
+.tip_1 {
+    color: black;
+}
+
+img {
+    width: 50%;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+#vis_title {
+    margin-top: 30px;
+}
+
+#vis_table {
+    margin-top: 30px;
+}
+
+#slider-simple {
+    margin-left: -20px;
+}
