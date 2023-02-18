@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetasearch - Dolphinately a Good Search Engine</title>
+    <link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='styles/style.css') }}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+</head>
+<body>
+    
+    <div onload="createAndAppendNewContactForm()" > 
+     
+        <h1 id="forms_h1"> Cetasearch - Dolphinately a Good Search Engine ^_^ </h1>
+        
+        <div id="form-container">
+        </div>
+
+    </div>
+    <table id="vis_table">
+        <tr>
+          <td id="result">
+            <div id="d1" style="display: none;">
+            </div>
+          </td>
+          <td id="citation">
+            <div id="d2" style="display: none;">
+            </div>
+          </td>
+        </tr>
+      </table>
+</body>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/app.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/d3.v5.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/d3-dsv.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/topojson.v2.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/d3-tip.min.js') }}"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+<script src="https://unpkg.com/d3@4.10.0/build/d3.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
+    <script id="form-template" type="text/html">
+        <!-- <form  class="contact-form" method="POST" action="submit.php" > -->
+        <form  class="contact-form" method="POST" action="search" >
+          <h2></h2>
+          <div class="form-field" id = "form_field_id">
+            <label> </label>
+            <input id="name_input" type="text" style="width: 500px; height: 35px; display: block; margin : 0 auto;" name="Query" placeholder="Ask me whale-ever you want..."/>
+            
+        </form>
+    </script>
+
+    <script>
+      $.post("/predict", {
+        nothing: "burger"
+      })
+      .done(function(data){
+        d3.json("{{ url_for('static', filename='tmp/curr_answer.json') }}", function(d) {
+          data_question = d["query"];
+          data_answer = d["answer"];
+          data_source = d["source"];
+          var answer_block = d3.select("body")
+          .select("#d1")
+          .style("display", "block");
+          
+          answer_block
+          .append("p")
+          .style("font-weight","bold")
+          .text(function(d){return "Question:"});
+
+          answer_block
+          .append("p")
+          .text(function(d){return data_question})
+          ;
+
+          answer_block
+          .append("p")
+          .style("font-weight","bold")
+          .text(function(d){return "Answer:"});
+
+          for (line in data_answer){
+            answer_block
+            .append("p")
+            .style("font-style", "italic")
+            .text(function(d){return data_answer[line]})
+          };
+          
+          var citation_block = d3.select("body")
+          .select("#d2")
+          .style("display", "block");
+
+          citation_block
+          .append("p")
+          .style("font-weight","bold")
+          .text(function(d){return "Sources"});
+
+          for (line in data_source){
+            citation_block
+            .append("p")
+            .style("font-style", "italic")
+            .style("font-weight","bold")
+            .text(function(d){
+                return "[" + data_source[line]["idx"] + "] " + data_source[line]["title"] + " (Wikipedia)"
+            });
+            citation_block
+            .append("p")
+            .style("font-style", "italic")
+            .text(function(d){
+                var output = data_source[line]["paragraph"]
+                if (output.length > 1680){
+                    output = output.substring(0, 1680) + "..."
+                }
+                return output
+            });
+            
+            
+          };
+
+        });
+      })
+    </script>
+
+</html>
