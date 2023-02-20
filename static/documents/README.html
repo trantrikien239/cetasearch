@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Features</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <p>On February 7, 2023, Microsoft launched a new version of Bing that included ChatGPT to enhance search results. Inspired by this advancement and the movie &quot;Avatar: The Way of Water,&quot; I created Cetasearch, a search engine that focuses on knowledge about the ocean and cetacean species such as whales, orcas, dolphins, and more. Cetasearch offers conversational answers with detailed links to the sources, which I hope could play a small role in the conservation of the ocean and marine wildlife.</p>
+<p>The search engine has three main functionalities: a semantic search engine, generative text completion for conversational answers, and annotations that match answers with sources. Everything was built using publicly available NLP pre-trained models and APIs, such as Sentence transformer, OpenAI's GPT3.5 API, and multiple pre-trained LLMs during development.</p>
+<p><img src="file:////Users/kientran/code/favorite/cetasearch/static/images/Cetasearch_TAD.png" alt="Cetasearch's Technical Architecture Diagram"></p>
+<blockquote>
+<p><em>Data crawling, text processing and indexing is pre-calculated in batch to save inference time</em></p>
+</blockquote>
+<p>Due to my limited computational power of my computer, multiple measures were taken to narrow the scope of this project while maintaining the core functionalities:</p>
+<ul>
+<li>Focus on the ocean and cetacean species. The data sources were limited to a small subset of Wikipedia articles centered around these topics.</li>
+<li>Preprocess and index the source documents to save processing time.</li>
+<li>Leverage OpenAI's GPT3.5 API for text completion. During the experimentation phase, I tried a few open-source LLM models as well, but OpenAI's API provided the best answers by a large margin.</li>
+</ul>
+<p><img src="file:////Users/kientran/code/favorite/cetasearch/static/images/how-help-protecting-whales.jpeg" alt="Cetasearch's answer to a generic query"></p>
+<p>Cetasearch provide a better answer to a generic answer than Google's current feature snippet!</p>
+<p><img src="file:////Users/kientran/code/favorite/cetasearch/static/images/whale-protection-google-snipet.jpeg" alt="Google snipet"></p>
+<p>Other open-ended questions got good answers as well.</p>
+<p><img src="file:////Users/kientran/code/favorite/cetasearch/static/images/dolphin-interesting-facts.jpeg" alt="Fact-based open-ended questions"></p>
+<p><img src="file:////Users/kientran/code/favorite/cetasearch/static/images/itelligence-comparison.jpeg" alt="Comparison"></p>
+<h1 id="features">Features</h1>
+<h2 id="currently-available-features">Currently available features</h2>
+<p>The following features are currently available:</p>
+<ul>
+<li>A semantic search engine based on thousands of Wikipedia articles related to the ocean. Due to the tedious and messy nature of data processing, only the end results (processed text and indexes) has been included in the codebase.</li>
+<li>The ability to generate conversational answers using OpenAI's API (<code>text-davinci-003</code>). Although GPT3.5 has been found to produce the best results, other text summarization and completion LLMs can be used in its place.</li>
+<li>Annotation of generated answers at the sentence level, linking pieces of the answer to their source materials.</li>
+</ul>
+<h2 id="future-developments">Future developments</h2>
+<ul>
+<li>Fact-checking of generated answers, which is a technically challenging problem that even large companies like Bing and Google are still working on. In the meantime, users will have to fact-check the answers themselves by referring to the annotated sources.</li>
+<li>Annotation at the word/phrase level (possibly using non-maximum suppression, inspired by the computer vision bounding-box drawing task).</li>
+<li>Scaling the search engine beyond limited pre-processed data focusing only on the ocean and whales. A possible next step is to develop a general-purpose search engine.</li>
+<li>Improving response speed by finding ways to reduce the time it takes to rely on OpenAI's API.</li>
+</ul>
+<h2 id="limitations">Limitations</h2>
+<p>As previously noted, Cetasearch currently faces several limitations, including speed, the amount of indexed web documents, and the lack of a fact-checking module. These limitations can impact the accuracy and usefulness of search results, and efforts are underway to address these issues and enhance the functionality of the tool.</p>
+<h1 id="installation">Installation</h1>
+<ol>
+<li>Make sure you include your OpenAI API key as an environment variable under <code>OPENAI_API_KEY</code> name. You can sign up for a 3-month free trial <a href="https://openai.com/api/pricing/">here</a> and access your API key <a href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key">here</a></li>
+<li>Install requirements <code>pip install -r requirements.txt</code></li>
+<li>Run <code>python main.py</code> to initiate the web server</li>
+<li>Access the search UI using your web browser at <code>127.0.0.1:5000</code></li>
+</ol>
+<h1 id="credits--referrences">Credits &amp; Referrences</h1>
+<ul>
+<li><a href="https://github.com/david-smejkal/wiki2txt">Wiki2txt</a> - for text processing of wikipedia archive</li>
+<li><a href="https://huggingface.co/sentence-transformers/multi-qa-distilbert-cos-v1">Sentence transformer</a> - main component of semantic search</li>
+<li><a href="https://openai.com/api/">OpenAI API</a> - main component for text generation</li>
+<li><a href="https://www.avatar.com/">Avatar - The way of water</a> and the Whale conservation efforts by multiple organizations are the inspiration of this project.</li>
+<li>Tech stack: Python (Numpy, Pandas, Flask,etc.), Transformer-based Large Language Models</li>
+</ul>
+<p><em>Note: As of Feb 19, 2023, Microsoft's New Bing is still in beta testing and not yet release to the public.</em></p>
+
+        
+        
+    </body>
+    </html>
