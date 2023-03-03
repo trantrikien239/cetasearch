@@ -45,8 +45,9 @@ def generate_predictions():
         query = f.readlines()[0]
     anno_gen_text, df_top_paragraphs = se.generate_answer(
         query, 
-        gpt_model = "text-davinci-003",
+        # gpt_model = "text-davinci-003",
         # gpt_model = "text-curie-001",
+        gpt_model = "gpt-3.5-turbo",
         )
 
     curr_answer = {

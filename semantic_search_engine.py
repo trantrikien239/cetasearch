@@ -46,12 +46,18 @@ class SemanticSearchEngine(object):
         return tb_desc_tmp
             
     def generate_answer(self, query, k=3, max_tokens=256, gpt_model = "text-curie-001"):
-        prompt_form = """Use the following context to answer below query: 
+        if gpt_model != "gpt-3.5-turbo":
+            prompt_form = """Use the following context to answer below query: 
 {input_context}
 
 Question: {query}
 
 Answer:"""
+        else:
+            prompt_form = """Use the following context to answer my question:
+{input_context}
+
+My question is: {query}"""
 
         df_top_paragraphs = self.search_paragraph(query, k=k)
         list_paragraph = list(df_top_paragraphs["paragraph"])
@@ -67,16 +73,24 @@ Answer:"""
                 input_context=context_,
                 query=query)
 
-        response = openai.Completion.create(
-            # model="text-curie-001", 
-            # model="text-davinci-003", 
-            model=gpt_model, 
-            prompt=prompt, 
-            temperature=0.33, 
-            max_tokens=max_tokens)
-
-
-        generated_text = response["choices"][0]["text"]
+        if gpt_model != "gpt-3.5-turbo":
+            response = openai.Completion.create(
+                # model="text-curie-001", 
+                # model="text-davinci-003", 
+                model=gpt_model, 
+                prompt=prompt, 
+                temperature=0.33, 
+                max_tokens=max_tokens)
+            generated_text = response["choices"][0]["text"]
+        else:
+            response = openai.ChatCompletion.create(
+                model=gpt_model, 
+                messages=[
+                    {"role": "system", "content": "You are a conversational search engine, you convert the search results to conversational answers."},
+                    {"role": "user", "content": prompt},
+                ], 
+                max_tokens=max_tokens)
+            generated_text = response["choices"][0]["message"]["content"]
         
         anno_gen_text,  srces = self.annotation(generated_text, df_top_paragraphs)
         
