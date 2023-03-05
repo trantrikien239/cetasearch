@@ -1,3 +1,5 @@
+Update March 4, 2023: Incorporate new ChatGPT API (`gpt-3.5-turbo`). Reinforcement Learning with Human Feedback helps this model chieve better performance than `text-davinci-003` with 10% of the cost.
+
 On February 7, 2023, Microsoft launched a new version of Bing that included ChatGPT to enhance search results. Inspired by this advancement and the movie "Avatar: The Way of Water," I created Cetasearch, a search engine that focuses on knowledge about the ocean and cetacean species such as whales, orcas, dolphins, and more. Cetasearch offers conversational answers with detailed links to the sources, which I hope could play a small role in the conservation of the ocean and marine wildlife.
 
 The search engine has three main functionalities: a semantic search engine, generative text completion for conversational answers, and annotations that match answers with sources. Everything was built using publicly available NLP pre-trained models and APIs, such as Sentence transformer, OpenAI's GPT3.5 API, and multiple pre-trained LLMs during development.
