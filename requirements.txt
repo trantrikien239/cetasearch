@@ -1,10 +1,12 @@
 flask
 flask-restful
+numpy
 pandas
+pyarrow
 beautifulsoup4
 requests
-numpy
 scikit-learn
 sentence-transformers
 openai
 transformers
+faiss-cpu

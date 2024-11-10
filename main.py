@@ -4,11 +4,25 @@ import numpy as np
 import json
 import os
 from semantic_search_engine import SemanticSearchEngine
+from openai import OpenAI
 
-#from flask_cors import CORS #comment this on deployment
+try:
+    # Include your OPENAI_API_KEY in the environment variables
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+except:
+    print("OPENAI_API_KEY key not found")
+
+USE_LOCAL = True
+if USE_LOCAL:
+    # llm_client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
+    llm_client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="lm-studio")
+    model_id = "llama-3.2-1b-instruct"
+else:
+    llm_client = OpenAI(api_key=OPENAI_API_KEY)
+    model_id = "gpt-4o-mini"
+
 
 app = Flask(__name__, static_folder="static")
-#CORS(app) #comment this on deployment
 
 TMP_QUERY_PATH = "static/tmp/curr_query.txt"
 TMP_ANSWER_PATH = "static/tmp/curr_answer.json"
@@ -21,7 +35,8 @@ emb_paragraph = np.load("static/data_ocean/paragraph_emb.npy")
 
 se = SemanticSearchEngine(
     df_titles, df_paragraphs,
-    emb_header=emb_header, emb_paragraph=emb_paragraph
+    emb_header=emb_header, emb_paragraph=emb_paragraph,
+    llm_client=llm_client, model_id=model_id
     )
 
 @app.route('/')
@@ -44,11 +59,7 @@ def generate_predictions():
     with open(TMP_QUERY_PATH, "r") as f:
         query = f.readlines()[0]
     anno_gen_text, df_top_paragraphs = se.generate_answer(
-        query, 
-        # gpt_model = "text-davinci-003",
-        # gpt_model = "text-curie-001",
-        gpt_model = "gpt-3.5-turbo",
-        )
+        query, k=3, max_tokens=256)
 
     curr_answer = {
         "query": query,
