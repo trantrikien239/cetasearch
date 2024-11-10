@@ -15,7 +15,7 @@ except:
 USE_LOCAL = True
 if USE_LOCAL:
     # llm_client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
-    llm_client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="lm-studio")
+    llm_client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="llama.cpp")
     model_id = "llama-3.2-1b-instruct"
 else:
     llm_client = OpenAI(api_key=OPENAI_API_KEY)

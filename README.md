@@ -1,4 +1,26 @@
-Update March 4, 2023: Incorporate new ChatGPT API (`gpt-3.5-turbo`). Reinforcement Learning with Human Feedback helps this model achieve better performance than `text-davinci-003` with 10% of the inference cost.
+# Update Nov 2024
+
+- Fast vector search with FAISS, improve retrieval time by 10x
+- Local Llama replacing OpenAI's API, ensure absolute privacy - data never leaves computer
+
+## Installation
+First install llama.cpp then host a prediction sever locally.
+
+```
+brew install llama.cpp
+llama-server --hf-repo hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF --hf-file llama-3.2-1b-instruct-q8_0.gguf -c 2048
+```
+
+Then install and run the search engine normally
+```
+pip install -r requirements.txt
+python main.py
+```
+Cetasearch should be read at `127.0.0.1:5000`, ask away ~
+
+# Update March 4, 2023
+
+Incorporate new ChatGPT API (`gpt-3.5-turbo`). Reinforcement Learning with Human Feedback helps this model achieve better performance than `text-davinci-003` with 10% of the inference cost.
 
 On February 7, 2023, Microsoft launched a new version of Bing that included ChatGPT to enhance search results. Inspired by this advancement and the movie "Avatar: The Way of Water," I created Cetasearch, a search engine that focuses on knowledge about the ocean and cetacean species such as whales, orcas, dolphins, and more. Cetasearch offers conversational answers with detailed links to the sources, which I hope could play a small role in the conservation of the ocean and marine wildlife.
 
