@@ -3,6 +3,7 @@ import pandas as pd
 from time import time
 from sentence_transformers import SentenceTransformer
 import faiss
+import streamlit as st
 
 class SemanticSearchEngine(object):
     def __init__(self, 
@@ -45,11 +46,16 @@ class SemanticSearchEngine(object):
         tb_desc_tmp = self.df_paragraph.loc[top_idx,:].copy()
         tb_desc_tmp["score"] = top_score
         tb_desc_tmp = tb_desc_tmp.reset_index(drop=True)
-        print(f"Retrieval time faiss: {time() - start_:.4f} (s)")
+        rt_ = time() - start_
+        print(f"Retrieval time faiss: {rt_:.4f} (s)")
         
-        return tb_desc_tmp
+        return tb_desc_tmp, ("Retrieval time faiss", rt_)
+
+    def rerank_paragraph(self, query, list_results):
+        pass
             
     def generate_answer(self, query, k=3, max_tokens=256):
+        logs = []
         prompt_form = """Use the following context to answer my question:
 {input_context}
 
@@ -57,7 +63,8 @@ My question is: {query}
 
 Provide a concise answer."""
 
-        df_top_paragraphs = self.search_paragraph(query, k=k)
+        df_top_paragraphs, log_ = self.search_paragraph(query, k=k)
+        logs.append(log_)
         list_paragraph = list(df_top_paragraphs["paragraph"])
         context = "\n".join(list_paragraph)
         
@@ -80,11 +87,14 @@ Provide a concise answer."""
                 ], 
                 max_tokens=max_tokens)
         generated_text = response.choices[0].message.content
-        print(f"Generation time: {time() - start_:.4f} (s)")
+        rt_ = time() - start_
+        print(f"Generation time: {rt_:.4f} (s)")
         
+        logs.append(("Generation time", rt_))
+
         anno_gen_text,  srces = self.annotation(generated_text, df_top_paragraphs)
         
-        return anno_gen_text, df_top_paragraphs.loc[list(srces),:]
+        return anno_gen_text, df_top_paragraphs.loc[list(srces),:], logs
 
     def annotation(self, generated_text, df_top_paragraphs, sen_min_len=20):
         top_para_emb = self.smodel.encode(df_top_paragraphs["paragraph"].values)

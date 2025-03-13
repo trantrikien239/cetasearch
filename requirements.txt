@@ -10,3 +10,4 @@ sentence-transformers
 openai
 transformers
 faiss-cpu
+streamlit

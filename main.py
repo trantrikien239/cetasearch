@@ -12,7 +12,7 @@ try:
 except:
     print("OPENAI_API_KEY key not found")
 
-USE_LOCAL = True
+USE_LOCAL = False
 if USE_LOCAL:
     # llm_client = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
     llm_client = OpenAI(base_url="http://127.0.0.1:8080/v1", api_key="llama.cpp")

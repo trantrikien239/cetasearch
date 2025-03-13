@@ -73,8 +73,8 @@ As previously noted, Cetasearch currently faces several limitations, including s
 
 1. Make sure you include your OpenAI API key as an environment variable under `OPENAI_API_KEY` name. You can sign up for a 3-month free trial [here](https://openai.com/api/pricing/) and access your API key [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)
 2. Install requirements `pip install -r requirements.txt`
-3. Run `python main.py` to initiate the web server
-4. Access the search UI using your web browser at `127.0.0.1:5000`
+3. Run `python main.py` to initiate the web server then Access the search UI using your web browser at `127.0.0.1:5000` OR
+4. Run `streamlit run cetas.py`
 
 # Credits & Referrences
 
