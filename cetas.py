@@ -9,7 +9,7 @@ import streamlit as st
 from openai import OpenAI
 
 from semantic_search_engine import SemanticSearchEngine
-from utils import load_search_engine, load_data
+from utils import load_search_engine, load_data, load_es_client
 
 # Wide mode
 st.set_page_config(layout="wide")
@@ -24,7 +24,11 @@ st.title("Dolphinately the best search engine for marine life")
 c1, c2 = st.columns([2, 3])
 query = c1.text_input("Ask me whalever you want")
 
-se = load_search_engine(use_local=False)
+
+es_client = load_es_client()
+print("Elasticsearch client loaded")
+
+se = load_search_engine(use_local=False, _es_client=es_client)
 print("Search engine loaded")
 
 if query:

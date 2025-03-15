@@ -1,20 +1,25 @@
 import numpy as np
 import pandas as pd
 from time import time
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 import faiss
 import streamlit as st
+from elasticsearch import helpers as es_helpers
 
 class SemanticSearchEngine(object):
     def __init__(self, 
                  df_header, df_paragraph,
                  llm_client, model_id="gpt-4o-mini",
+                 _es_client=None,
                  emb_header=None, emb_paragraph=None,
                  ) -> None:
         self.df_header = df_header.reset_index(drop=True)[["title", "header"]]
         self.df_paragraph = df_paragraph.reset_index(drop=True)
 
         self.smodel = SentenceTransformer('multi-qa-distilbert-cos-v1')
+        
+        # rerank model
+        self.rerank_model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
         print("==== Loading header embeddings ====")
         start_ = time()
@@ -36,8 +41,28 @@ class SemanticSearchEngine(object):
         self.model_id = model_id
         self.index = faiss.IndexFlatIP(self.emb_paragraph.shape[1])
         self.index.add(self.emb_paragraph)
+        self.es_client = _es_client
+        if self.es_client is not None:
+            self.__es_import_data()
+        
+
+    def __es_import_data(self):
+        # Bulk index data to elasticsearch
+        self.es_client.indices.create(index="ceta", ignore=400)
+        bulk_data = []
+        for i in range(self.df_paragraph.shape[0]):
+            bulk_data.append(
+                {
+                    "_index": "ceta",
+                    "_id": i,
+                    "_source": self.df_paragraph.iloc[i,:].to_dict()
+                }
+            )
+        es_helpers.bulk(self.es_client, bulk_data)
+
+
     
-    def search_paragraph(self, query, k=3):
+    def search_semantic(self, query, k=3):
         start_ = time()
         query_emb = self.smodel.encode(query)
         D, I = self.index.search(np.array([query_emb]), k)
@@ -47,12 +72,56 @@ class SemanticSearchEngine(object):
         tb_desc_tmp["score"] = top_score
         tb_desc_tmp = tb_desc_tmp.reset_index(drop=True)
         rt_ = time() - start_
-        print(f"Retrieval time faiss: {rt_:.4f} (s)")
         
-        return tb_desc_tmp, ("Retrieval time faiss", rt_)
+        print(f"Vector retrieval time: {rt_:.4f} (s)")
+        return tb_desc_tmp, ("Vector retrieval time", rt_)
 
-    def rerank_paragraph(self, query, list_results):
-        pass
+    def search_keyword(self, query, k=3):
+        # Search using elasticsearch, including fuzzy matching
+        start_ = time()
+        output = self.es_client.search(
+            index="ceta",
+            body={
+                "query": {
+                    "multi_match": {
+                        "query": query,
+                        "fields": ["paragraph", "title"],
+                        "fuzziness": "AUTO"
+                    }
+                }
+            }
+        )
+        rt_ = time() - start_
+
+        tb_desc_tmp = []
+        for hit in output["hits"]["hits"]:
+            tb_desc_tmp.append(
+                [
+                    hit["_source"]["title"], 
+                    hit["_source"]["paragraph"], 
+                    hit["_score"]
+                ])
+        tb_desc_tmp = pd.DataFrame(tb_desc_tmp, columns=["title", "paragraph", "score"])
+        
+        print(f"Keyword search time: {rt_:.4f} (s)")
+        return tb_desc_tmp, ("Keyword search time", rt_)
+
+    def rerank(self, df_top_paragraphs, query):
+        start_ = time()
+        scores = self.rerank_model.predict(
+            [
+                (query, paragraph) 
+                for paragraph 
+                in df_top_paragraphs["paragraph"].values
+            ]
+        )
+        rt_ = time() - start_
+        print(f"Reranking time: {rt_:.4f} (s)")
+        df_top_paragraphs["rerank_score"] = scores
+        df_top_paragraphs = df_top_paragraphs.sort_values(by="rerank_score", ascending=False
+            ).reset_index(drop=True)
+        return df_top_paragraphs, ("Reranking time", rt_)
+
             
     def generate_answer(self, query, k=3, max_tokens=256):
         logs = []
@@ -63,8 +132,17 @@ My question is: {query}
 
 Provide a concise answer."""
 
-        df_top_paragraphs, log_ = self.search_paragraph(query, k=k)
+        df_top_paragraphs, log_ = self.search_semantic(query, k=k*5)
         logs.append(log_)
+        df_top_by_keywords, log_ = self.search_keyword(query, k=k*5)
+        logs.append(log_)
+        df_top_paragraphs = pd.concat([df_top_paragraphs, df_top_by_keywords], axis=0)
+        df_top_paragraphs = df_top_paragraphs.drop_duplicates(subset=["title", "paragraph"])
+
+        df_top_paragraphs, log_ = self.rerank(df_top_paragraphs, query)
+        logs.append(log_)
+        df_top_paragraphs = df_top_paragraphs.head(k)
+
         list_paragraph = list(df_top_paragraphs["paragraph"])
         context = "\n".join(list_paragraph)
         

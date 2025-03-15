@@ -6,6 +6,7 @@ from openai import OpenAI
 
 from semantic_search_engine import SemanticSearchEngine
 import streamlit as st
+from elasticsearch import Elasticsearch
 
 @st.cache_data
 def load_data(path, filetype="parquet"):
@@ -16,7 +17,7 @@ def load_data(path, filetype="parquet"):
     return output
 
 @st.cache_resource(show_spinner="Hold on tight")
-def load_search_engine(use_local=False):
+def load_search_engine(use_local=False, _es_client=None):
     df_titles = load_data("static/data_ocean/titles.parquet")
     df_paragraphs = load_data("static/data_ocean/paragraphs.parquet")
     emb_header = load_data("static/data_ocean/header_emb.npy", filetype="npy")
@@ -39,10 +40,17 @@ def load_search_engine(use_local=False):
     se = SemanticSearchEngine(
         df_titles, df_paragraphs,
         emb_header=emb_header, emb_paragraph=emb_paragraph,
-        llm_client=llm_client, model_id=model_id
+        llm_client=llm_client, model_id=model_id,
+        _es_client=_es_client
         )
     return se
 
-# @st.cache_data(show_spinner="")
-# def generate_answer(_se, query, k=3, max_tokens=512):
-#     return _se.generate_answer(query, k, max_tokens)
+@st.cache_resource(show_spinner="Getting elasticsearch client")
+def load_es_client():
+    # password is mysecurepassword
+    es = Elasticsearch(
+        "https://localhost:9200",
+        basic_auth=("elastic", "mysecurepassword"),
+        verify_certs=False
+        )
+    return es
